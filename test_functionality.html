@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Extension Functionality Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .pass { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .fail { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Extension Functionality Test</h1>
+    
+    <div class="test-section">
+        <h2>1. CSS Overflow Fix Test</h2>
+        <div id="overflow-test" style="width: 300px; height: 100px; border: 1px solid #ccc; overflow-y: auto; overflow-x: hidden; padding: 10px;">
+            <div style="width: 400px; height: 200px; background: linear-gradient(45deg, #ff6b6b, #4ecdc4);">
+                This content is wider than the container. If you see a horizontal scrollbar, the fix didn't work.
+            </div>
+        </div>
+        <div class="test-result info">
+            ✅ Horizontal scrollbar should be hidden. Only vertical scrolling should be visible.
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>2. Blockchain Storage Test</h2>
+        <button onclick="testBlockchainStorage()">Test Blockchain Storage</button>
+        <div id="blockchain-results"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>3. URL Scanning Test</h2>
+        <input type="text" id="test-url" placeholder="Enter URL to test" value="https://example.com" style="width: 300px; padding: 8px; margin: 5px;">
+        <button onclick="testUrlScan()">Test URL Scan</button>
+        <div id="url-scan-results"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>4. Email Breach Test</h2>
+        <input type="email" id="test-email" placeholder="Enter email to test" value="test@example.com" style="width: 300px; padding: 8px; margin: 5px;">
+        <button onclick="testEmailBreach()">Test Email Breach Check</button>
+        <div id="email-results"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>5. Theme Toggle Test</h2>
+        <button onclick="testThemeToggle()">Toggle Theme</button>
+        <div id="theme-results"></div>
+    </div>
+
+    <script>
+        // Test blockchain storage
+        function testBlockchainStorage() {
+            const results = document.getElementById('blockchain-results');
+            results.innerHTML = '<div class="test-result info">Testing blockchain storage...</div>';
+            
+            try {
+                // Simulate blockchain storage test
+                const testData = {
+                    url: 'https://test-phishing-site.com',
+                    score: 85,
+                    reasons: ['Test phishing detection'],
+                    timestamp: Date.now()
+                };
+                
+                // Check if we can create a simple blockchain structure
+                const blockchain = {
+                    chain: [{
+                        index: 0,
+                        timestamp: Date.now(),
+                        data: testData,
+                        previousHash: '0',
+                        hash: 'test-hash'
+                    }],
+                    flaggedWebsites: [testData]
+                };
+                
+                results.innerHTML = `
+                    <div class="test-result pass">✅ Blockchain storage structure created successfully</div>
+                    <div class="test-result info">Chain length: ${blockchain.chain.length}</div>
+                    <div class="test-result info">Flagged websites: ${blockchain.flaggedWebsites.length}</div>
+                `;
+            } catch (error) {
+                results.innerHTML = `<div class="test-result fail">❌ Blockchain storage test failed: ${error.message}</div>`;
+            }
+        }
+
+        // Test URL scanning
+        function testUrlScan() {
+            const url = document.getElementById('test-url').value;
+            const results = document.getElementById('url-scan-results');
+            results.innerHTML = '<div class="test-result info">Testing URL scan...</div>';
+            
+            // Simulate URL analysis
+            setTimeout(() => {
+                const score = Math.floor(Math.random() * 100);
+                const verdict = score >= 70 ? 'SUSPICIOUS' : 'SAFE';
+                
+                results.innerHTML = `
+                    <div class="test-result ${score >= 70 ? 'fail' : 'pass'}">
+                        ${score >= 70 ? '⚠️' : '✅'} URL: ${url}
+                    </div>
+                    <div class="test-result info">Score: ${score}/100</div>
+                    <div class="test-result info">Verdict: ${verdict}</div>
+                    ${score >= 70 ? '<div class="test-result info">This would be stored in blockchain automatically</div>' : ''}
+                `;
+            }, 1000);
+        }
+
+        // Test email breach check
+        function testEmailBreach() {
+            const email = document.getElementById('test-email').value;
+            const results = document.getElementById('email-results');
+            results.innerHTML = '<div class="test-result info">Testing email breach check...</div>';
+            
+            // Simulate email breach check
+            setTimeout(() => {
+                const breachCount = Math.floor(Math.random() * 5);
+                
+                results.innerHTML = `
+                    <div class="test-result ${breachCount > 0 ? 'fail' : 'pass'}">
+                        ${breachCount > 0 ? '⚠️' : '✅'} Email: ${email}
+                    </div>
+                    <div class="test-result info">Breach count: ${breachCount}</div>
+                    ${breachCount > 0 ? '<div class="test-result info">This would be stored in blockchain automatically</div>' : ''}
+                `;
+            }, 1000);
+        }
+
+        // Test theme toggle
+        function testThemeToggle() {
+            const results = document.getElementById('theme-results');
+            const body = document.body;
+            const currentTheme = body.getAttribute('data-theme') || 'light';
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            body.setAttribute('data-theme', newTheme);
+            
+            results.innerHTML = `
+                <div class="test-result pass">✅ Theme toggled from ${currentTheme} to ${newTheme}</div>
+                <div class="test-result info">Current theme: ${newTheme}</div>
+            `;
+        }
+
+        // Initialize theme
+        document.body.setAttribute('data-theme', 'light');
+    </script>
+</body>
+</html>

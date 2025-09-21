@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Popup Blocked - Security Scanner</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="warning-page">
+    <div class="warning-container">
+        <div class="warning-card">
+            <div class="warning-header">
+                <div class="warning-icon">🚫</div>
+                <h1 class="warning-title">Popup Blocked</h1>
+                <p class="warning-subtitle">Security Scanner has blocked a popup window</p>
+            </div>
+            
+            <div class="warning-content">
+                <div class="warning-details">
+                    <div class="detail-item">
+                        <div class="detail-label">Target URL:</div>
+                        <div class="detail-value" id="popupUrl">Loading...</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Source Domain:</div>
+                        <div class="detail-value" id="popupDomain">Loading...</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Trigger:</div>
+                        <div class="detail-value" id="popupSource">Loading...</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="warning-actions">
+                <div class="checkbox-container">
+                    <label>
+                        <input type="checkbox" id="rememberChoice">
+                        Remember my choice for this website
+                    </label>
+                </div>
+                
+                <button class="btn btn-secondary" id="blockBtn">
+                    <span class="btn-icon">🛡️</span>
+                    Block Popup
+                </button>
+                <button class="btn btn-danger" id="allowBtn">
+                    <span class="btn-icon">✅</span>
+                    Allow Popup
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="popup_blocker.js"></script>
+</body>
+</html>

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eBay Scraper Debug Page</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .debug-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #007bff;
+        }
+        .debug-button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        .debug-button:hover {
+            background: #0056b3;
+        }
+        .debug-output {
+            margin-top: 10px;
+            padding: 10px;
+            background: #e9ecef;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left-color: #dc3545;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border-left-color: #28a745;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 eBay Scraper Debug Page</h1>
+        <p>This page helps debug the eBay scraper integration issues.</p>
+
+        <div class="debug-section">
+            <h3>1. Check Extension API</h3>
+            <button class="debug-button" onclick="checkExtensionAPI()">Check Extension API</button>
+            <div id="apiResult" class="debug-output" style="display: none;"></div>
+        </div>
+
+        <div class="debug-section">
+            <h3>2. Test Basic Message</h3>
+            <button class="debug-button" onclick="testBasicMessage()">Send Test Message</button>
+            <div id="messageResult" class="debug-output" style="display: none;"></div>
+        </div>
+
+        <div class="debug-section">
+            <h3>3. Test eBay Scrape</h3>
+            <button class="debug-button" onclick="testEbayScrape()">Test eBay Scrape</button>
+            <div id="scrapeResult" class="debug-output" style="display: none;"></div>
+        </div>
+
+        <div class="debug-section">
+            <h3>4. Test AI Analysis</h3>
+            <button class="debug-button" onclick="testAIAnalysis()">Test AI Analysis</button>
+            <div id="analysisResult" class="debug-output" style="display: none;"></div>
+        </div>
+
+        <div class="debug-section">
+            <h3>5. Full Debug Test</h3>
+            <button class="debug-button" onclick="fullDebugTest()">Run Full Debug</button>
+            <div id="fullDebugResult" class="debug-output" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        function showResult(elementId, content, isError = false) {
+            const element = document.getElementById(elementId);
+            element.style.display = 'block';
+            element.textContent = content;
+            element.className = `debug-output ${isError ? 'error' : 'success'}`;
+        }
+
+        function checkExtensionAPI() {
+            const result = {
+                chrome: typeof chrome !== 'undefined',
+                runtime: typeof chrome !== 'undefined' && typeof chrome.runtime !== 'undefined',
+                sendMessage: typeof chrome !== 'undefined' && typeof chrome.runtime !== 'undefined' && typeof chrome.runtime.sendMessage === 'function',
+                tabs: typeof chrome !== 'undefined' && typeof chrome.tabs !== 'undefined',
+                scripting: typeof chrome !== 'undefined' && typeof chrome.scripting !== 'undefined'
+            };
+            
+            const allGood = Object.values(result).every(Boolean);
+            showResult('apiResult', JSON.stringify(result, null, 2), !allGood);
+        }
+
+        async function testBasicMessage() {
+            try {
+                if (typeof chrome === 'undefined' || !chrome.runtime) {
+                    throw new Error('Chrome extension API not available');
+                }
+
+                const response = await chrome.runtime.sendMessage({
+                    type: 'test_message'
+                });
+
+                showResult('messageResult', `Response received: ${JSON.stringify(response, null, 2)}`, false);
+            } catch (error) {
+                showResult('messageResult', `Error: ${error.message}\nStack: ${error.stack}`, true);
+            }
+        }
+
+        async function testEbayScrape() {
+            try {
+                if (typeof chrome === 'undefined' || !chrome.runtime) {
+                    throw new Error('Chrome extension API not available');
+                }
+
+                console.log('Sending eBay scrape message...');
+                const response = await chrome.runtime.sendMessage({
+                    type: 'ebay_scrape'
+                });
+
+                console.log('Received response:', response);
+
+                if (!response) {
+                    throw new Error('No response received from service worker');
+                }
+
+                if (response.success) {
+                    showResult('scrapeResult', `✅ Success!\n\nData: ${JSON.stringify(response.result || response.data, null, 2)}`, false);
+                } else {
+                    showResult('scrapeResult', `❌ Failed: ${response.error || 'Unknown error'}\n\nFull response: ${JSON.stringify(response, null, 2)}`, true);
+                }
+            } catch (error) {
+                showResult('scrapeResult', `❌ Error: ${error.message}\n\nStack: ${error.stack}`, true);
+            }
+        }
+
+        async function testAIAnalysis() {
+            try {
+                if (typeof chrome === 'undefined' || !chrome.runtime) {
+                    throw new Error('Chrome extension API not available');
+                }
+
+                // First get some test data
+                const testData = {
+                    title: 'Test Product',
+                    price: { current: '$100.00', currency: 'USD' },
+                    seller: { name: 'Test Seller' },
+                    condition: 'New',
+                    description: 'Test description'
+                };
+
+                console.log('Sending AI analysis message...');
+                const response = await chrome.runtime.sendMessage({
+                    type: 'ebay_analyze',
+                    data: testData
+                });
+
+                console.log('Received AI response:', response);
+
+                if (!response) {
+                    throw new Error('No response received from service worker');
+                }
+
+                if (response.success) {
+                    showResult('analysisResult', `✅ AI Analysis Success!\n\nResult: ${JSON.stringify(response.result, null, 2)}`, false);
+                } else {
+                    showResult('analysisResult', `❌ AI Analysis Failed: ${response.error || 'Unknown error'}\n\nFull response: ${JSON.stringify(response, null, 2)}`, true);
+                }
+            } catch (error) {
+                showResult('analysisResult', `❌ Error: ${error.message}\n\nStack: ${error.stack}`, true);
+            }
+        }
+
+        async function fullDebugTest() {
+            const results = [];
+            
+            try {
+                results.push('🔍 Starting full debug test...\n');
+                
+                // Step 1: Check API
+                results.push('1. Checking Chrome Extension API...');
+                const hasChrome = typeof chrome !== 'undefined';
+                const hasRuntime = hasChrome && typeof chrome.runtime !== 'undefined';
+                results.push(`   Chrome: ${hasChrome}, Runtime: ${hasRuntime}`);
+                
+                if (!hasChrome || !hasRuntime) {
+                    throw new Error('Chrome extension API not available');
+                }
+                results.push('   ✅ API available\n');
+                
+                // Step 2: Test basic message
+                results.push('2. Testing basic message...');
+                try {
+                    const basicResponse = await chrome.runtime.sendMessage({ type: 'test' });
+                    results.push(`   Response: ${JSON.stringify(basicResponse)}`);
+                } catch (e) {
+                    results.push(`   Basic message failed: ${e.message}`);
+                }
+                results.push('');
+                
+                // Step 3: Test eBay scrape
+                results.push('3. Testing eBay scrape...');
+                try {
+                    const scrapeResponse = await chrome.runtime.sendMessage({ type: 'ebay_scrape' });
+                    results.push(`   Response received: ${!!scrapeResponse}`);
+                    if (scrapeResponse) {
+                        results.push(`   Success: ${scrapeResponse.success}`);
+                        results.push(`   Error: ${scrapeResponse.error || 'None'}`);
+                        if (scrapeResponse.result || scrapeResponse.data) {
+                            results.push(`   Data keys: ${Object.keys(scrapeResponse.result || scrapeResponse.data).join(', ')}`);
+                        }
+                    }
+                } catch (e) {
+                    results.push(`   eBay scrape failed: ${e.message}`);
+                }
+                results.push('');
+                
+                // Step 4: Test AI analysis
+                results.push('4. Testing AI analysis...');
+                try {
+                    const testData = { title: 'Test', price: { current: '$100' } };
+                    const aiResponse = await chrome.runtime.sendMessage({ 
+                        type: 'ebay_analyze', 
+                        data: testData 
+                    });
+                    results.push(`   Response received: ${!!aiResponse}`);
+                    if (aiResponse) {
+                        results.push(`   Success: ${aiResponse.success}`);
+                        results.push(`   Error: ${aiResponse.error || 'None'}`);
+                    }
+                } catch (e) {
+                    results.push(`   AI analysis failed: ${e.message}`);
+                }
+                
+                results.push('\n✅ Full debug test completed');
+                showResult('fullDebugResult', results.join('\n'), false);
+                
+            } catch (error) {
+                results.push(`\n❌ Debug test failed: ${error.message}`);
+                results.push(`Stack: ${error.stack}`);
+                showResult('fullDebugResult', results.join('\n'), true);
+            }
+        }
+
+        // Auto-run basic checks on page load
+        window.addEventListener('load', () => {
+            console.log('eBay Scraper Debug Page loaded');
+            checkExtensionAPI();
+        });
+    </script>
+</body>
+</html>

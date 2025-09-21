@@ -1,0 +1,80 @@
+{
+  "manifest_version": 3,
+  "name": "Security Scanner (Dev)",
+  "version": "0.1",
+  "description": "Analyze URLs for scam patterns and check email addresses for data breaches.",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "webNavigation",
+    "scripting",
+    "tabs",
+    "webRequest",
+    "declarativeNetRequest",
+    "declarativeNetRequestFeedback"
+  ],
+  "host_permissions": [
+    "https://www.virustotal.com/*",
+    "https://safebrowsing.googleapis.com/*",
+    "https://haveibeenpwned.com/*",
+    "https://api.allorigins.win/*",
+    "https://www.youtube.com/*",
+    "https://*.youtu.be/*",
+    "https://generativelanguage.googleapis.com/*",
+    "*://*.youtube.com/*",
+    "*://youtube.com/*",
+    "*://*.youtu.be/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icon.png",
+      "48": "icon.png",
+      "128": "icon.png"
+    }
+  },
+  "background": {
+    "service_worker": "service_worker.js"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["warning.html", "warning.js", "styles.css", "popup_blocker.html", "popup_blocker.js", "popup_detector.js", "popup_rules.json", "tos_scanner.js", "aiSh/phishing_site_urls.csv", "blockchain_storage.js", "ublock_integration.js", "ublock_content_script.js", "ublock_popup.html", "ublock_popup.js", "ebay_scraper.js"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["popup_detector.js"],
+      "run_at": "document_start",
+      "world": "MAIN"
+    },
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_start",
+      "world": "ISOLATED"
+    },
+    {
+      "matches": ["<all_urls>"],
+      "js": ["tos_scanner.js"],
+      "run_at": "document_end",
+      "world": "ISOLATED"
+    },
+    {
+      "matches": ["<all_urls>"],
+      "js": ["ublock_content_script.js"],
+      "run_at": "document_start",
+      "world": "ISOLATED"
+    }
+  ],
+  "declarative_net_request": {
+    "rule_resources": [
+      {
+        "id": "ublock_rules",
+        "enabled": true,
+        "path": "ublock_rules.json"
+      }
+    ]
+  }
+}

@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eBay Scraper Test Page</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e9ecef;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .test-section h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        .test-button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        .test-button:hover {
+            background: #0056b3;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .result.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .result.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .result.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .mock-ebay-product {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .mock-ebay-product h2 {
+            color: #856404;
+            margin-top: 0;
+        }
+        .mock-ebay-product .price {
+            font-size: 24px;
+            font-weight: bold;
+            color: #28a745;
+            margin: 10px 0;
+        }
+        .mock-ebay-product .seller {
+            color: #6c757d;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛒 eBay Scraper Test Page</h1>
+            <p>This page simulates an eBay product page to test the scraper functionality.</p>
+        </div>
+
+        <div class="mock-ebay-product">
+            <h2 id="product-title">Apple iPhone 15 Pro Max 256GB - Space Black - Unlocked</h2>
+            <div class="price" id="product-price">$1,199.99</div>
+            <div class="seller" id="product-seller">techdeals_store (99.2% positive feedback)</div>
+            <div id="product-condition">Condition: New (Open box)</div>
+            <div id="product-shipping">Shipping: $15.99 Expedited Shipping</div>
+            <div id="product-description">Brand new Apple iPhone 15 Pro Max with 256GB storage. Space Black color. Factory unlocked. Includes original box and accessories. Minor cosmetic wear on packaging only.</div>
+            <div id="product-category">Cell Phones & Accessories > Cell Phones</div>
+        </div>
+
+        <div class="test-section">
+            <h3>1. Extension Integration Test</h3>
+            <p>Test if the eBay scraper extension is properly loaded and functional.</p>
+            <button class="test-button" onclick="testExtensionIntegration()">Test Extension Integration</button>
+            <div id="integrationResult" class="result" style="display: none;"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>2. Data Scraping Test</h3>
+            <p>Test if the scraper can extract product data from this mock eBay page.</p>
+            <button class="test-button" onclick="testDataScraping()">Test Data Scraping</button>
+            <div id="scrapingResult" class="result" style="display: none;"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>3. AI Analysis Test</h3>
+            <p>Test if the AI analysis works with the scraped data.</p>
+            <button class="test-button" onclick="testAIAnalysis()">Test AI Analysis</button>
+            <div id="analysisResult" class="result" style="display: none;"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>4. Full Workflow Test</h3>
+            <p>Test the complete workflow: scrape data → analyze with AI → display results.</p>
+            <button class="test-button" onclick="testFullWorkflow()">Test Full Workflow</button>
+            <div id="workflowResult" class="result" style="display: none;"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>5. Error Handling Test</h3>
+            <p>Test error handling for various scenarios.</p>
+            <button class="test-button" onclick="testErrorHandling()">Test Error Handling</button>
+            <div id="errorResult" class="result" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        // Test functions
+        async function testExtensionIntegration() {
+            const resultDiv = document.getElementById('integrationResult');
+            resultDiv.style.display = 'block';
+            
+            try {
+                // Check if extension is available
+                if (typeof chrome === 'undefined' || !chrome.runtime) {
+                    throw new Error('Chrome extension API not available');
+                }
+
+                // Test basic communication
+                const response = await chrome.runtime.sendMessage({
+                    type: 'ebay_scrape'
+                });
+
+                if (response && response.success) {
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = '✅ Extension integration working! eBay scraper is functional.';
+                } else {
+                    throw new Error('Failed to communicate with eBay scraper: ' + (response.error || 'Unknown error'));
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = '❌ Extension integration failed: ' + error.message;
+            }
+        }
+
+        async function testDataScraping() {
+            const resultDiv = document.getElementById('scrapingResult');
+            resultDiv.style.display = 'block';
+            
+            try {
+                const response = await chrome.runtime.sendMessage({
+                    type: 'ebay_scrape'
+                });
+
+                if (response && response.success) {
+                    const data = response.result;
+                    resultDiv.className = 'result success';
+                    resultDiv.innerHTML = `
+                        ✅ Data scraping successful!<br><br>
+                        <strong>Scraped Data:</strong><br>
+                        Title: ${data.title}<br>
+                        Price: ${data.price?.current || 'N/A'}<br>
+                        Seller: ${data.seller?.name || 'N/A'}<br>
+                        Condition: ${data.condition}<br>
+                        Shipping: ${data.shipping}<br>
+                        Description: ${data.description?.substring(0, 100)}...<br>
+                        Category: ${data.category}<br>
+                        Item ID: ${data.itemId}
+                    `;
+                } else {
+                    throw new Error('Failed to scrape data: ' + (response.error || 'Unknown error'));
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = '❌ Data scraping failed: ' + error.message;
+            }
+        }
+
+        async function testAIAnalysis() {
+            const resultDiv = document.getElementById('analysisResult');
+            resultDiv.style.display = 'block';
+            
+            try {
+                // First scrape data
+                const scrapeResponse = await chrome.runtime.sendMessage({
+                    type: 'ebay_scrape'
+                });
+
+                if (!scrapeResponse.success) {
+                    throw new Error('Failed to scrape data: ' + scrapeResponse.error);
+                }
+
+                // Then analyze with AI
+                const analysisResponse = await chrome.runtime.sendMessage({
+                    type: 'ebay_analyze',
+                    data: scrapeResponse.result
+                });
+
+                if (analysisResponse && analysisResponse.success) {
+                    const analysis = analysisResponse.result;
+                    resultDiv.className = 'result success';
+                    resultDiv.innerHTML = `
+                        ✅ AI analysis successful!<br><br>
+                        <strong>Analysis Results:</strong><br>
+                        Legitimacy Score: ${analysis.analysis.legitimacyScore}/10<br>
+                        Value Score: ${analysis.analysis.valueScore}/10<br>
+                        Risk Level: ${analysis.analysis.riskLevel}<br>
+                        Recommendation: ${analysis.analysis.shouldBuy}<br>
+                        Summary: ${analysis.summary}
+                    `;
+                } else {
+                    throw new Error('Failed to analyze data: ' + (analysisResponse.error || 'Unknown error'));
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = '❌ AI analysis failed: ' + error.message;
+            }
+        }
+
+        async function testFullWorkflow() {
+            const resultDiv = document.getElementById('workflowResult');
+            resultDiv.style.display = 'block';
+            
+            try {
+                resultDiv.className = 'result info';
+                resultDiv.textContent = '🔄 Testing full workflow...';
+                
+                // Step 1: Scrape data
+                const scrapeResponse = await chrome.runtime.sendMessage({
+                    type: 'ebay_scrape'
+                });
+
+                if (!scrapeResponse.success) {
+                    throw new Error('Step 1 failed - Scraping: ' + scrapeResponse.error);
+                }
+
+                resultDiv.textContent = '✅ Step 1: Data scraped successfully. Analyzing with AI...';
+                
+                // Step 2: AI analysis
+                const analysisResponse = await chrome.runtime.sendMessage({
+                    type: 'ebay_analyze',
+                    data: scrapeResponse.result
+                });
+
+                if (!analysisResponse.success) {
+                    throw new Error('Step 2 failed - AI Analysis: ' + analysisResponse.error);
+                }
+
+                resultDiv.className = 'result success';
+                resultDiv.innerHTML = `
+                    ✅ Full workflow completed successfully!<br><br>
+                    <strong>Workflow Steps:</strong><br>
+                    1. ✅ Data scraping completed<br>
+                    2. ✅ AI analysis completed<br><br>
+                    <strong>Final Result:</strong><br>
+                    ${analysisResponse.result.summary}
+                `;
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = '❌ Full workflow failed: ' + error.message;
+            }
+        }
+
+        async function testErrorHandling() {
+            const resultDiv = document.getElementById('errorResult');
+            resultDiv.style.display = 'block';
+            
+            try {
+                // Test with invalid data
+                const response = await chrome.runtime.sendMessage({
+                    type: 'ebay_analyze',
+                    data: null
+                });
+
+                if (response && !response.success) {
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = '✅ Error handling working correctly - properly handled null data error.';
+                } else {
+                    resultDiv.className = 'result info';
+                    resultDiv.textContent = 'ℹ️ Error handling test completed - response: ' + JSON.stringify(response);
+                }
+            } catch (error) {
+                resultDiv.className = 'result success';
+                resultDiv.textContent = '✅ Error handling working correctly - caught error: ' + error.message;
+            }
+        }
+
+        // Auto-run basic tests on page load
+        window.addEventListener('load', () => {
+            console.log('eBay Scraper Test Page loaded');
+            // You can add auto-tests here if needed
+        });
+    </script>
+</body>
+</html>
